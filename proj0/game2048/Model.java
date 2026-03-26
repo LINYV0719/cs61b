@@ -1,11 +1,12 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Lin
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -110,15 +111,91 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        /**to check whether the board changes,I add a variable "changed",when tile moves,the changed becomes
+         * true,and I write a function that tilt by column
+         *
+         */
+        Board b =this.board;
+        int size = b.size();
 
+        this.board.setViewingPerspective(side);
+
+        for (int col=0;col<size;++col){
+           changed = tiltWithColumn(this.board,col) | changed;
+        }
+
+        this.board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /**this is the function that tilt by column
+     * the main logic is judge the tile from top to bottom , it should move
+     * there are six situations
+     * 1.above is empty and it does not reach the boundary
+     * 2.above is empty and it reaches the boundary
+     * 3.above is not empty and the two values are same
+     * 4.above is not empty and the two values are same,but the above has been merged
+     * 5.above is not empty and the two values are not same
+     * 6.it is empty
+     * although it is ugly , I will enhance the logic subsequently
+     * @param b
+     * @param col
+     * @return
+     */
+    public boolean tiltWithColumn(Board b,int col){
+        int row = b.size();
+        boolean isChange =false;
+        boolean[] isMerge = new boolean[row];
+        Arrays.fill(isMerge,true);
+        for (int i = row-1;i>=0;--i){
+            Tile t = b.tile(col,i);
+            if (t==null){
+               continue;
+            }
+            for (int j = 1;j<row-i;++j){
+                Tile aboveT = b.tile(col,i+j);
+                if (aboveT==null){
+                    if( i+j+1 == row){
+                        b.move(col,i+j,t);
+                        isChange = true;
+                        continue;
+                    }
+                    else {
+                        if (b.tile(col,i+j+1)==null){
+                            continue;
+                        }
+                        else if(t.value() == b.tile(col,i+j+1).value() && !isMerge[i+j+1]){
+                            b.move(col,i+j,t);
+                            isChange = true;
+                            break;
+                        }
+                        else if(t.value() != b.tile(col,i+j+1).value()){
+                            b.move(col,i+j,t);
+                            isChange = true;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                else if (t.value() == aboveT.value() && isMerge[i+j]){
+                    b.move(col,i+j,t);
+                    isChange = true;
+                    score += 2*t.value();
+                    isMerge[i+j] = false;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        return isChange;
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -137,7 +214,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int size =b.size();
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                if(b.tile(col,row)==null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +231,20 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        int size =b.size();
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                Tile t =b.tile(col,row);
+                if (t==null){
+                    continue;
+                }
+                else {
+                    if(t.value()==MAX_PIECE){
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -157,11 +254,47 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
+    /**
+     * I divide the logic that there are two adjacent tiles with the same value into a single function
+     * only need to check the below and the right tile , because the above and the left tile have been
+     * checked in previous check
+     * @param b
+     * @return
+     */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
-        return false;
+        if (emptySpaceExists(b)){
+            return true;
+        }
+        return adjacentTilesWithSameValue(b);
     }
 
+    public static boolean adjacentTilesWithSameValue(Board b){
+        int size =b.size();
+        boolean judge = false;
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                int tValue = b.tile(col,row).value();
+                int backwardCol = col + 1;
+                int backwardRow = row + 1;
+                int t3Value,t4Value;
+                if (backwardCol == size){
+                   t3Value = -1;
+                }
+                else{
+                    t3Value = b.tile(backwardCol,row).value();
+                }
+                if (backwardRow == size){
+                   t4Value = -1;
+                }
+                else {
+                    t4Value = b.tile(col,backwardRow).value();
+                }
+
+                judge = ( tValue == t3Value || tValue == t4Value || judge);
+            }
+        }
+        return judge;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
