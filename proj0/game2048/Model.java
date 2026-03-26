@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Lin
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -137,7 +137,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int size =b.size();
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                if(b.tile(col,row)==null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +154,20 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        int size =b.size();
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                Tile t =b.tile(col,row);
+                if (t==null){
+                    continue;
+                }
+                else {
+                    if(t.value()==MAX_PIECE){
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -157,11 +177,47 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
+    /**
+     * I divide the logic that there are two adjacent tiles with the same value into a single function
+     * only need to check the below and the right tile , because the above and the left tile have been
+     * checked in previous check
+     * @param b
+     * @return
+     */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
-        return false;
+        if (emptySpaceExists(b)){
+            return true;
+        }
+        return adjacentTilesWithSameValue(b);
     }
 
+    public static boolean adjacentTilesWithSameValue(Board b){
+        int size =b.size();
+        boolean judge = false;
+        for(int col=0;col<size;++col){
+            for(int row=0;row<size;++row){
+                int tValue = b.tile(col,row).value();
+                int backwardCol = col + 1;
+                int backwardRow = row + 1;
+                int t3Value,t4Value;
+                if (backwardCol == size){
+                   t3Value = -1;
+                }
+                else{
+                    t3Value = b.tile(backwardCol,row).value();
+                }
+                if (backwardRow == size){
+                   t4Value = -1;
+                }
+                else {
+                    t4Value = b.tile(col,backwardRow).value();
+                }
+
+                judge = ( tValue == t3Value || tValue == t4Value || judge);
+            }
+        }
+        return judge;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
