@@ -1,5 +1,6 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -113,12 +114,71 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        Board b =this.board;
+        int size = b.size();
 
+        this.board.setViewingPerspective(side);
+
+        for (int col=0;col<size;++col){
+           changed = tiltWithColumn(this.board,col) | changed;
+        }
+
+        this.board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    public boolean tiltWithColumn(Board b,int col){
+        int row = b.size();
+        boolean isChange =false;
+        boolean[] isMerge = new boolean[row];
+        Arrays.fill(isMerge,true);
+        for (int i = row-1;i>=0;--i){
+            Tile t = b.tile(col,i);
+            if (t==null){
+               continue;
+            }
+            for (int j = 1;j<row-i;++j){
+                Tile aboveT = b.tile(col,i+j);
+                if (aboveT==null){
+                    if( i+j+1 == row){
+                        b.move(col,i+j,t);
+                        isChange = true;
+                        continue;
+                    }
+                    else {
+                        if (b.tile(col,i+j+1)==null){
+                            continue;
+                        }
+                        else if(t.value() == b.tile(col,i+j+1).value() && !isMerge[i+j+1]){
+                            b.move(col,i+j,t);
+                            isChange = true;
+                            break;
+                        }
+                        else if(t.value() != b.tile(col,i+j+1).value()){
+                            b.move(col,i+j,t);
+                            isChange = true;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                else if (t.value() == aboveT.value() && isMerge[i+j]){
+                    b.move(col,i+j,t);
+                    isChange = true;
+                    score += 2*t.value();
+                    isMerge[i+j] = false;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        return isChange;
     }
 
     /** Checks if the game is over and sets the gameOver variable
