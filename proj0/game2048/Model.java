@@ -111,9 +111,12 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        /**to check whether the board changes,I add a variable "changed",when tile moves,the changed becomes
+         * true,and I write a function that tilt by column
+         *
+         */
         Board b =this.board;
         int size = b.size();
 
@@ -131,6 +134,20 @@ public class Model extends Observable {
         return changed;
     }
 
+    /**this is the function that tilt by column
+     * the main logic is judge the tile from top to bottom , it should move
+     * there are six situations
+     * 1.above is empty and it does not reach the boundary
+     * 2.above is empty and it reaches the boundary
+     * 3.above is not empty and the two values are same
+     * 4.above is not empty and the two values are same,but the above has been merged
+     * 5.above is not empty and the two values are not same
+     * 6.it is empty
+     * although it is ugly , I will enhance the logic subsequently
+     * @param b
+     * @param col
+     * @return
+     */
     public boolean tiltWithColumn(Board b,int col){
         int row = b.size();
         boolean isChange =false;
