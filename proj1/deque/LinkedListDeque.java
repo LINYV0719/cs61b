@@ -39,7 +39,7 @@ public class LinkedListDeque<T> implements Iterable<T> ,Deque<T> {
     }
 
     public void addLast(T lastT) {
-        TNode lastNode = new TNode(lastT, sentinelNode, sentinelNode.next);
+        TNode lastNode = new TNode(lastT, sentinelNode, sentinelNode.prev);
         sentinelNode.prev.next = lastNode;
         sentinelNode.prev = lastNode;
         ++size;
@@ -112,9 +112,10 @@ public class LinkedListDeque<T> implements Iterable<T> ,Deque<T> {
             return targetNode.item;
         }else {
             TNode targetNode = sentinelNode.prev;
-            while (index > 0) {
+            int steps = size -1-index;
+            while (steps > 0) {
                 targetNode = targetNode.prev;
-                --index;
+                --steps;
             }
             return targetNode.item;
         }
