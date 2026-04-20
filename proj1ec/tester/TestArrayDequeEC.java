@@ -8,7 +8,7 @@ import student.StudentArrayDeque;
 
 public class TestArrayDequeEC {
     @Test
-    public void TestArrayDeque(){
+    public void TestArrayDeque() {
         StudentArrayDeque<Integer> buggyA = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> correctA = new ArrayDequeSolution<>();
         String message = "";
@@ -23,7 +23,7 @@ public class TestArrayDequeEC {
                 correctA.addFirst(i);
                 message = message + "addFirst(" + i + ")\n";
             } else if (numberBetweenZeroAndOne == 2) {
-                if (buggyA.isEmpty()){
+                if (buggyA.isEmpty()) {
                     continue;
                 }
                 Integer b = buggyA.removeFirst();
@@ -31,7 +31,7 @@ public class TestArrayDequeEC {
                 message = message + "removeFirst()" + "\n";
                 assertEquals(message,c,b);
             } else if (numberBetweenZeroAndOne == 3) {
-                if (buggyA.isEmpty()){
+                if (buggyA.isEmpty()) {
                     continue;
                 }
                 Integer b = buggyA.removeLast();
@@ -39,7 +39,7 @@ public class TestArrayDequeEC {
                 message = message + "removeLast()" + "\n";
                 assertEquals(message,c,b);
             } else {
-                if (buggyA.isEmpty()){
+                if (buggyA.isEmpty()) {
                     continue;
                 }
                 int size = buggyA.size();
