@@ -18,10 +18,10 @@ public class GuitarString {
 
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
-        int capacity = (int)Math.round(SR/frequency);
+        int capacity = (int) Math.round(SR / frequency);
         buffer = new ArrayDeque<Double>();
         int c = capacity;
-        while(c>0){
+        while (c > 0) {
             buffer.addLast(0.0);
             --c;
         }
@@ -31,7 +31,7 @@ public class GuitarString {
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
         int s = buffer.size();
-        while(s>0){
+        while (s > 0) {
             double r = Math.random() - 0.5;
             buffer.removeFirst();
             buffer.addLast(r);
@@ -47,8 +47,8 @@ public class GuitarString {
      * the Karplus-Strong algorithm.
      */
     public void tic() {
-            double removeValue =  buffer.removeFirst();
-            buffer.addLast((removeValue + buffer.get(0))/2 * DECAY );
+        double removeValue =  buffer.removeFirst();
+        buffer.addLast((removeValue + buffer.get(0)) / 2 * DECAY );
     }
 
     /* Return the double at the front of the buffer. */

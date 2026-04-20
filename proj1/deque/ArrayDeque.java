@@ -2,105 +2,105 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T>,Iterable<T> {
-    private Object[] Tarray;
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
+    private Object[] tArray;
     private int size;
     private int firstAddPosition;
     private int lastAddPosition;
-    public ArrayDeque(){
-        Tarray = new Object[8];
+    public ArrayDeque() {
+        tArray = new Object[8];
         size = 0;
         firstAddPosition = 4;
         lastAddPosition = 5;
     }
-    private void resize(int capacity){
+    private void resize(int capacity) {
         Object[] newArray = new Object[capacity];
-        for (int i=0;i<size();++i){
+        for (int i = 0; i < size(); ++i) {
             newArray[i] = get(i);
         }
-        Tarray = newArray;
-        firstAddPosition=newArray.length-1;
-        lastAddPosition=size;
+        tArray = newArray;
+        firstAddPosition = newArray.length - 1;
+        lastAddPosition = size;
     }
     public void addFirst(T item) {
-        if (size == Tarray.length) {
+        if (size == tArray.length) {
             resize(size * 2);
         }
-        Tarray[firstAddPosition] = item;
-        firstAddPosition =(--firstAddPosition +Tarray.length)%Tarray.length;
+        tArray[firstAddPosition] = item;
+        firstAddPosition = (--firstAddPosition + tArray.length) % tArray.length;
         ++size;
     }
     public void addLast(T item) {
-        if (size == Tarray.length) {
+        if (size == tArray.length) {
             resize(size * 2);
         }
-        Tarray[lastAddPosition] = item;
-        lastAddPosition = ++lastAddPosition % Tarray.length;
+        tArray[lastAddPosition] = item;
+        lastAddPosition = ++lastAddPosition % tArray.length;
         ++size;
     }
-    public int size(){
+    public int size() {
         return size;
     }
-    public void printDeque(){
-        for (int i=0;i<size();++i){
-            System.out.print(get(i)+" ");
+    public void printDeque() {
+        for (int i = 0; i < size(); ++i) {
+            System.out.print(get(i) + " ");
         }
         System.out.println();
     }
-    public T removeFirst(){
-        if(size == 0){
+    public T removeFirst() {
+        if (size == 0) {
             return null;
         }
-        int firstValuePosition = (firstAddPosition + 1) % Tarray.length;
-        T firstValue = (T) Tarray[firstValuePosition];
-        Tarray[firstValuePosition] = null;
+        int firstValuePosition = (firstAddPosition + 1) % tArray.length;
+        T firstValue = (T) tArray[firstValuePosition];
+        tArray[firstValuePosition] = null;
         --size;
-        if((double) size / Tarray.length < 0.25 && Tarray.length >= 16){
-            resize((int) (Tarray.length/2));
+        if ((double) size / tArray.length < 0.25 && tArray.length >= 16) {
+            resize((int) (tArray.length / 2));
         }
-        firstAddPosition = ++firstAddPosition%Tarray.length;
+        firstAddPosition = ++firstAddPosition % tArray.length;
         return firstValue;
     }
-    public T removeLast(){
-        if(size == 0){
+    public T removeLast() {
+        if (size == 0) {
             return null;
         }
-        int lastValuePosition = (lastAddPosition - 1 + Tarray.length) % Tarray.length;
-        T lastValue = (T) Tarray[lastValuePosition];
-        Tarray[lastValuePosition] = null;
+        int lastValuePosition = (lastAddPosition - 1 + tArray.length) % tArray.length;
+        T lastValue = (T) tArray[lastValuePosition];
+        tArray[lastValuePosition] = null;
         --size;
-        if((double) size / Tarray.length < 0.25 && Tarray.length >= 16){
-            resize((int) (Tarray.length/2));
+        if ((double) size / tArray.length < 0.25 && tArray.length >= 16) {
+            resize((int) (tArray.length / 2));
         }
-        lastAddPosition = (--lastAddPosition + Tarray.length) %Tarray.length;
+        lastAddPosition = (--lastAddPosition + tArray.length) % tArray.length;
         return lastValue;
     }
-    public T get(int index){
-        if( size <= index || index < 0){
+    public T get(int index) {
+        if ( size <= index || index < 0) {
             return null;
         }
-        return (T) Tarray[(firstAddPosition+index+1)%Tarray.length];
+        return (T) tArray[(firstAddPosition + index + 1) % tArray.length];
     }
     public Iterator<T> iterator() {
         ArrayDeque.DequeIterator interator = new ArrayDeque.DequeIterator();
         return interator;
     }
 
-    private class DequeIterator implements Iterator<T>{
-        int currentIndex =0;
+    private class DequeIterator implements Iterator<T> {
+        int currentIndex = 0;
         T currentValue = get(currentIndex);
         public boolean hasNext(){
             return currentIndex < size;
         }
-        public T next(){
+        public T next() {
             T item = get(currentIndex);
             ++currentIndex;
             return item;
         }
     }
 
-    public boolean equals(Object o){
-        if(o == this){
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         } else if (!(o instanceof Deque)) {
             return false;
@@ -109,13 +109,13 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T> {
         Deque<?> other = (Deque<?>) o;
         int oSize = other.size();
 
-        if (size()!=oSize){
+        if (size() != oSize) {
             return false;
         }
-        for (int i=0;i<size();++i){
+        for (int i = 0; i < size(); ++i) {
             T myItem = this.get(i);
             Object otherItem = other.get(i);
-            if (!myItem.equals(otherItem)){
+            if (!myItem.equals(otherItem)) {
                 return false;
             }
         }
