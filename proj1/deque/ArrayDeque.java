@@ -76,7 +76,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return lastValue;
     }
     public T get(int index) {
-        if ( size <= index || index < 0) {
+        if (size <= index || index < 0) {
             return null;
         }
         return (T) tArray[(firstAddPosition + index + 1) % tArray.length];
@@ -89,7 +89,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private class DequeIterator implements Iterator<T> {
         int currentIndex = 0;
         T currentValue = get(currentIndex);
-        public boolean hasNext(){
+        public boolean hasNext() {
             return currentIndex < size;
         }
         public T next() {

@@ -3,7 +3,6 @@ package gh2;
 import deque.ArrayDeque;
 import deque.Deque;
 
-import java.util.Iterator;
 
 //Note: This file will not compile until you complete the Deque implementations
 public class GuitarString {
@@ -48,7 +47,7 @@ public class GuitarString {
      */
     public void tic() {
         double removeValue =  buffer.removeFirst();
-        buffer.addLast((removeValue + buffer.get(0)) / 2 * DECAY );
+        buffer.addLast((removeValue + buffer.get(0)) / 2 * DECAY);
     }
 
     /* Return the double at the front of the buffer. */
