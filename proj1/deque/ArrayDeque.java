@@ -55,10 +55,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T firstValue = (T) tArray[firstValuePosition];
         tArray[firstValuePosition] = null;
         --size;
+        firstAddPosition = ++firstAddPosition % tArray.length;
         if ((double) size / tArray.length < 0.25 && tArray.length >= 16) {
             resize((int) (tArray.length / 2));
         }
-        firstAddPosition = ++firstAddPosition % tArray.length;
         return firstValue;
     }
     public T removeLast() {
@@ -69,10 +69,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T lastValue = (T) tArray[lastValuePosition];
         tArray[lastValuePosition] = null;
         --size;
+        lastAddPosition = (--lastAddPosition + tArray.length) % tArray.length;
         if ((double) size / tArray.length < 0.25 && tArray.length >= 16) {
             resize((int) (tArray.length / 2));
         }
-        lastAddPosition = (--lastAddPosition + tArray.length) % tArray.length;
         return lastValue;
     }
     public T get(int index) {
