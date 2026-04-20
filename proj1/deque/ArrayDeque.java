@@ -38,9 +38,6 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T> {
         lastAddPosition = ++lastAddPosition % Tarray.length;
         ++size;
     }
-    public boolean isEmpty(){
-        return size==0;
-    }
     public int size(){
         return size;
     }
@@ -58,7 +55,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T> {
         T firstValue = (T) Tarray[firstValuePosition];
         Tarray[firstValuePosition] = null;
         --size;
-        if((double) (size / Tarray.length) < 0.25 && Tarray.length >= 16){
+        if((double) size / Tarray.length < 0.25 && Tarray.length >= 16){
             resize((int) (Tarray.length/2));
         }
         firstAddPosition = ++firstAddPosition%Tarray.length;
@@ -72,7 +69,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T> {
         T lastValue = (T) Tarray[lastValuePosition];
         Tarray[lastValuePosition] = null;
         --size;
-        if((double) (size / Tarray.length) < 0.25 && Tarray.length >= 16){
+        if((double) size / Tarray.length < 0.25 && Tarray.length >= 16){
             resize((int) (Tarray.length/2));
         }
         lastAddPosition = (--lastAddPosition + Tarray.length) %Tarray.length;

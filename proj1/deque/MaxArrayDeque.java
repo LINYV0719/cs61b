@@ -19,9 +19,9 @@ public class MaxArrayDeque<T> extends ArrayDeque<T>{
             return currentMaxValue;
         }
         else {
-            for (int i = 0; i < size() - 1; ++i) {
-                if (c.compare(currentMaxValue, this.get(i + 1)) < 0) {
-                    currentMaxValue = this.get(i + 1);
+            for (int i = 1;i < size();++i) {
+                if (c.compare(currentMaxValue, this.get(i)) < 0) {
+                    currentMaxValue = this.get(i);
                 }
             }
             return currentMaxValue;
