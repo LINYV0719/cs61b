@@ -55,7 +55,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T firstValue = (T) tArray[firstValuePosition];
         tArray[firstValuePosition] = null;
         --size;
+        //下面的first位置原来在if下面，然后rezie之后first就不是原来的了，导致了数组位置寻找的错误
         firstAddPosition = ++firstAddPosition % tArray.length;
+        //下面的double类型转换是我更正之后的，原来我是对商进行了转换，导致精度丢失，每次都会缩小数组，导致了程序崩溃
         if ((double) size / tArray.length < 0.25 && tArray.length >= 16) {
             resize((int) (tArray.length / 2));
         }
