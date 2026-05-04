@@ -61,8 +61,7 @@ public class Dog implements Serializable{
             return;
         }
         newDogFile.createNewFile();
-        writeObject(newDogFile, this);
-        System.out.println(newDogFile.toString());
+        writeObject(newDogFile,this);
     }
 
     @Override

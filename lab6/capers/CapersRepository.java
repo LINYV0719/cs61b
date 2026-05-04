@@ -32,17 +32,16 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() throws IOException {
-        File capersFolder = new File(CAPERS_FOLDER.toString());
-        if (!capersFolder.exists()){
-            capersFolder.mkdir();
+        if (!CAPERS_FOLDER.exists()){
+            CAPERS_FOLDER.mkdir();
         }
-        File storyFile = new File(join(CAPERS_FOLDER,"story").toString());
+        File storyFile = join(CAPERS_FOLDER,"story");
         if (!storyFile.exists()){
             storyFile.createNewFile();
         }
-        File dogsFolder = new File(join(CAPERS_FOLDER,"dogs").toString());
+        File dogsFolder = join(CAPERS_FOLDER,"dogs");
         if (!dogsFolder.exists()){
-            storyFile.mkdir();
+            dogsFolder.mkdir();
         }
     }
 
@@ -54,9 +53,9 @@ public class CapersRepository {
     public static void writeStory(String text) {
         File storyFile = join(CAPERS_FOLDER,"story");
         String currentStory = readContentsAsString(storyFile);
+        System.out.println(currentStory + text);
         //注意，下面这个函数写入的时候是会创建一个新文件，所以要把旧字符和新的拼接起来
         writeContents(storyFile,currentStory, text, "\n");
-        System.out.println(currentStory);
     }
 
     /**
@@ -79,5 +78,6 @@ public class CapersRepository {
     public static void celebrateBirthday(String name) {
         Dog birthdayDog = Dog.fromFile(name);
         birthdayDog.haveBirthday();
+        writeObject(join(CAPERS_FOLDER,"dogs", name), birthdayDog);
     }
 }
