@@ -1,0 +1,19 @@
+InOrder:
+Enter # strings to insert into the maps: ################
+Please enter a positive integer: 23214
+class bstmap.ULLMap: 6.71 sec
+class bstmap.BSTMap: 3.62 sec
+Java's Built-in TreeMap: 0.06 sec
+Java's Built-in HashMap: 0.04 sec
+
+
+Random Strings of length L into different types of maps as <String, Integer> pairs.
+Please enter desired length of each string: 20
+
+Enter # strings to insert into the maps: ####################
+Please enter a positive integer: 23456
+class bstmap.ULLMap: 5.09 sec
+class bstmap.BSTMap: 0.05 sec
+Java's Built-in TreeMap: 0.05 sec
+Java's Built-in HashMap: 0.03 sec
+Would you like to try more timed-tests? (y/n)n
