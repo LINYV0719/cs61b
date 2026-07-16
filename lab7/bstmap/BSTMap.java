@@ -2,6 +2,12 @@ package bstmap;
 
 import java.util.*;
 
+/*第一次修改后testbstmap通过，主要是因为空指针访问的问题，因为树的结点插入和删除需要操作父节点，所以我使用了类似于node.lchild.key之
+类的语句，但是对于叶结点等结点，由于子树为空，会导致空指针访问
+除此之外，还有根节点为空时不更新根节点值而是new了一个新变量
+以及put函数中相同key值不是更新而是继续插入的错误
+ */
+
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private Node root = null;
     private int size = 0;
@@ -135,15 +141,17 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         printInOrder(node.rchild);
     }
 
+    /*
+    中序遍历顺序是左跟右，对于根结点，只需要直接调用函数，例如下面的set.add(node.key)
+    和println(node.key)，不用再递归调用一次
+     */
     private Set<K> visit(Node node, Set<K> set) {
-        visit(node.rchild, set);
-        visit(node, set);
-        visit(node.rchild, set);
         if (node == null) {
             return null;
-        } else {
-            set.add(node.key);
         }
+        visit(node.lchild, set);
+        set.add(node.key);
+        visit(node.rchild, set);
         return set;
     }
 
@@ -153,16 +161,37 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return visit(root, set);
     }
 
+    //当删除的结点是根节点时，不应该把整个树删除，而是应该根据相同的逻辑调整二叉树
     @Override
     public V remove(K key) {
         Node ptr = root;
+        if (root == null) {
+            return null;
+        }
         if (root.key == key) {
-            clear();
-            size--;
-            return root.value;
+            V rootValue = root.value;
+            if (root.rchild == null && root.lchild == null) {
+                //clear()函数已把size置0,不需要size--
+                clear();
+            } else if (root.rchild == null) {
+                root = root.lchild;
+                size--;
+            } else if (root.lchild == null) {
+                root = root.rchild;
+                size--;
+            } else {
+                Node rootMin = findMin(root.rchild);
+                K mKey = rootMin.key;
+                V mValue = rootMin.value;
+                remove(rootMin.key);
+                root.value = mValue;
+                root.key = mKey;
+            }
+            return rootValue;
         } else {
             while(ptr != null) {
-                if(ptr.lchild.key == key || ptr.rchild.key == key) {
+                if((ptr.lchild != null && ptr.lchild.key == key) ||
+                        (ptr.rchild != null && ptr.rchild.key == key)) {
                     break;
                 } else if(compareK(ptr.key, key) > 0) {
                     ptr = ptr.lchild;
@@ -171,18 +200,20 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
                 }
             }
         }
-        if (ptr.lchild.key == key) {
+        if (ptr == null) {
+            return null;
+        }
+        if (ptr.lchild != null && ptr.lchild.key == key) {
             Node cmp = ptr.lchild;
             size--;
             return changeTree(ptr, cmp, true);
-        } else if (ptr.rchild.key == key) {
+        } else {
             Node cmp = ptr.rchild;
             size--;
-            return changeTree(ptr, cmp, true);
+            return changeTree(ptr, cmp, false);
         }
-        return null;
     }
-
+    //tr为true表示目标结点是其父节点的左子树
     private V changeTree(Node ptr, Node cmp, boolean tr) {
         V value = cmp.value;
         if (cmp.lchild == null && cmp.rchild == null) {
@@ -253,7 +284,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         if (ptr.rchild.key == key) {
             Node cmp = ptr.rchild;
             size--;
-            return changeTree(ptr, cmp, true);
+            return changeTree(ptr, cmp, false);
         }
         return null;
     }
