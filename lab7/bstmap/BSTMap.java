@@ -3,46 +3,44 @@ package bstmap;
 import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
-    private Node root;
-    private int size;
+    private Node root = null;
+    private int size = 0;
 
     public class Node {
         private K key;
         private V value;
         private Node lchild, rchild;
 
-        public Node(K key, V value, int size) {
+        public Node(K key, V value) {
             this.key = key;
             this.value = value;
         }
     }
 
     public int compareK(K k1, K k2) {
-        if (k1 == null || k2 == null) {
-            return -999;
-        }
         return k1.compareTo(k2);
     }
 
     @Override
     public void clear() {
-        if(this.root != null) {
+        if (this.root != null) {
             this.root = null;
             this.size = 0;
         }
     }
 
     private boolean nodeContainsKey(Node node, K key) {
-        if (node.key == null) {
+        //这里原本逻辑是检查key是否为空，但是如果传入结点为空会导致空指针异常
+        if (node == null) {
             return false;
         }
         int index = compareK(key, node.key);
         if(index == -999) {
             return false;
         }
-        if (index < 0) {
+        if (index > 0) {
             return nodeContainsKey(node.rchild, key);
-        } else if (index > 0) {
+        } else if (index < 0) {
             return nodeContainsKey(node.lchild, key);
         } else {
             return true;
@@ -54,8 +52,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return nodeContainsKey(root, key);
     }
 
-    public V nodeGet(Node node, K key) {
-        if (node.key == null) {
+    private V nodeGet(Node node, K key) {
+        if (node == null) {
             return null;
         }
         int index = compareK(key, node.key);
@@ -83,43 +81,48 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private Node findParent(Node node, K key) {
         int index = compareK(node.key, key);
-        int lIndex = compareK(node.lchild.key, key);
-        int rIndex = compareK(node.rchild.key, key);
+        //说明是叶结点或者单独一个的根节点，直接返回
+        if (node.lchild == null && node.rchild == null) {
+            return node;
+        }
+        // key > node.key
         if (index < 0) {
-            if (rIndex == -999) {
+            if (node.rchild == null) {
                 return node;
-            } else {
-                return findParent(node.rchild, key);
             }
+            return findParent(node.rchild, key);
         } else {
-            if (lIndex == -999) {
+            if (node.lchild == null) {
                 return node;
-            } else{
-                return findParent(node.lchild, key);
             }
+            return findParent(node.lchild, key);
         }
     }
 
     @Override
     public void put(K key, V value) {
-        if (root == null) {
-            root.key = key;
-            root.value = value;
-            root.lchild = null;
-            root.rchild = null;
+        if (this.root == null) {
+            //这里不应该实例化一个新的root结点，使得类的成员变量没有被赋值
+            this.root = new Node(key, value);
+            this.root.lchild = null;
+            this.root.rchild = null;
             size = 1;
         } else {
-            Node node = findParent(root, key);
-            Node newNode = null;
-            if (compareK(node.key, key) >= 0) {
+            Node node = findParent(this.root, key);
+            //这里没有对newnode实例化
+            Node newNode = new Node(key, value);
+            if (compareK(node.key, key) > 0) {
                 node.lchild = newNode;
-            } else {
-                node.rchild = newNode;
+                size++;
             }
-            newNode.key = key;
-            newNode.value = value;
-            newNode.lchild = newNode.rchild = null;
-            size++;
+            // 在插入一个已经存在的键时，应更新旧键值并保持树大小不变
+            else if (compareK(node.key, key) == 0) {
+                node.value = value;
+            }
+            else {
+                node.rchild = newNode;
+                size++;
+            }
         }
     }
 
@@ -155,6 +158,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         Node ptr = root;
         if (root.key == key) {
             clear();
+            size--;
             return root.value;
         } else {
             while(ptr != null) {
@@ -169,9 +173,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         if (ptr.lchild.key == key) {
             Node cmp = ptr.lchild;
+            size--;
             return changeTree(ptr, cmp, true);
         } else if (ptr.rchild.key == key) {
             Node cmp = ptr.rchild;
+            size--;
             return changeTree(ptr, cmp, true);
         }
         return null;
@@ -225,6 +231,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         if (root.key == key && root.value == value) {
             V rootValue = root.value;
             clear();
+            size--;
             return rootValue;
         } else {
             while (ptr != null) {
@@ -240,10 +247,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         if (ptr.lchild.key == key) {
             Node cmp = ptr.lchild;
+            size--;
             return changeTree(ptr, cmp, true);
         }
         if (ptr.rchild.key == key) {
             Node cmp = ptr.rchild;
+            size--;
             return changeTree(ptr, cmp, true);
         }
         return null;
